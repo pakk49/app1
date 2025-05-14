@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-body text-center">
+                <h1 class="display-4 mb-4">
+                    <i class="bi bi-heart-pulse text-primary"></i>
+                    ยินดีต้อนรับสู่ระบบวิเคราะห์อาการ
+                </h1>
+                <p class="lead">ระบบช่วยวิเคราะห์อาการเบื้องต้นและให้คำแนะนำในการดูแลสุขภาพ</p>
+                {% if not current_user.is_authenticated %}
+                <div class="mt-4">
+                    <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg me-2">ลงทะเบียน</a>
+                    <a href="{{ url_for('login') }}" class="btn btn-outline-primary btn-lg">เข้าสู่ระบบ</a>
+                </div>
+                {% else %}
+                <div class="mt-4">
+                    <a href="{{ url_for('analyze') }}" class="btn btn-primary btn-lg">เริ่มวิเคราะห์อาการ</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <h2 class="card-title mb-4">คำแนะนำเพื่อสุขภาพที่ดี</h2>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="health-tips mb-3">
+                            <h5><i class="bi bi-egg-fried"></i> โภชนาการที่ดี</h5>
+                            <ul>
+                                <li>รับประทานอาหารให้ครบ 5 หมู่</li>
+                                <li>ดื่มน้ำสะอาดอย่างน้อยวันละ 8 แก้ว</li>
+                                <li>หลีกเลี่ยงอาหารรสจัด และอาหารไขมันสูง</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="health-tips mb-3">
+                            <h5><i class="bi bi-bicycle"></i> การออกกำลังกาย</h5>
+                            <ul>
+                                <li>ออกกำลังกายสม่ำเสมออย่างน้อย 30 นาทีต่อวัน</li>
+                                <li>เลือกกิจกรรมที่เหมาะสมกับวัยและสภาพร่างกาย</li>
+                                <li>อบอุ่นร่างกายก่อนออกกำลังกายทุกครั้ง</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="health-tips mb-3">
+                            <h5><i class="bi bi-moon-stars"></i> การพักผ่อน</h5>
+                            <ul>
+                                <li>นอนหลับให้เพียงพอ 7-8 ชั่วโมงต่อวัน</li>
+                                <li>รักษาเวลาการนอนให้เป็นเวลา</li>
+                                <li>หลีกเลี่ยงการใช้อุปกรณ์อิเล็กทรอนิกส์ก่อนนอน</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="health-tips mb-3">
+                            <h5><i class="bi bi-shield-check"></i> การป้องกันโรค</h5>
+                            <ul>
+                                <li>ล้างมือบ่อยๆ ด้วยสบู่หรือเจลแอลกอฮอล์</li>
+                                <li>ตรวจสุขภาพประจำปี</li>
+                                <li>รับวัคซีนตามกำหนด</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

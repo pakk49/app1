@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="card-title text-center mb-4">เข้าสู่ระบบ</h2>
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">ชื่อผู้ใช้</label>
+                        <input type="text" class="form-control" id="username" name="username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">รหัสผ่าน</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">เข้าสู่ระบบ</button>
+                        <a href="{{ url_for('forgot_password') }}" class="btn btn-link">ลืมรหัสผ่าน?</a>
+                        <a href="{{ url_for('register') }}" class="btn btn-outline-secondary">ลงทะเบียนผู้ใช้ใหม่</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

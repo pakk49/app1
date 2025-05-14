@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h2 class="card-title text-center mb-4">ผลการวิเคราะห์อาการ</h2>
+                
+                <!-- BMI Analysis -->
+                <div class="mb-4">
+                    <h4>ค่าดัชนีมวลกาย (BMI)</h4>
+                    <div class="progress mb-2" style="height: 25px;">
+                        {% set bmi_percent = ((bmi - 15) / (40 - 15)) * 100 %}
+                        {% set bmi_color = 'bg-success' if 18.5 <= bmi <= 24.9 else 'bg-warning' if 25 <= bmi <= 29.9 else 'bg-danger' %}
+                        <div class="progress-bar {{ bmi_color }}" role="progressbar" style="width: {{ bmi_percent }}%">
+                            {{ "%.1f"|format(bmi) }}
+                        </div>
+                    </div>
+                    <div class="row text-center">
+                        <div class="col">น้ำหนักน้อย<br>&lt;18.5</div>
+                        <div class="col">ปกติ<br>18.5-24.9</div>
+                        <div class="col">น้ำหนักเกิน<br>25-29.9</div>
+                        <div class="col">อ้วน<br>&gt;30</div>
+                    </div>
+                </div>
+
+                <!-- Symptoms Analysis -->
+                <div class="mb-4">
+                    <h4>อาการที่พบ</h4>
+                    <div class="symptom-list">
+                        {% for symptom in symptoms %}
+                        <span class="badge bg-primary m-1">{{ symptom }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Possible Conditions -->
+                <div class="mb-4">
+                    <h4>การวินิจฉัยเบื้องต้น</h4>
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i>
+                        คำเตือน: ผลการวิเคราะห์นี้เป็นเพียงการคาดการณ์เบื้องต้นเท่านั้น ไม่สามารถใช้แทนการวินิจฉัยโดยแพทย์ได้
+                    </div>
+                    <div class="conditions-list">
+                        <!-- Example conditions -->
+                        <div class="condition-item mb-3">
+                            <h5>โรคไข้หวัดทั่วไป</h5>
+                            <div class="progress mb-2">
+                                <div class="progress-bar bg-primary" role="progressbar" style="width: 75%">75%</div>
+                            </div>
+                        </div>
+                        <div class="condition-item mb-3">
+                            <h5>ภูมิแพ้</h5>
+                            <div class="progress mb-2">
+                                <div class="progress-bar bg-primary" role="progressbar" style="width: 45%">45%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recommendations -->
+                <div class="mb-4">
+                    <h4>คำแนะนำ</h4>
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <i class="bi bi-clipboard2-pulse"></i>
+                                การรักษา
+                            </h5>
+                            <ul class="list-unstyled">
+                                <li><i class="bi bi-check-circle-fill text-success"></i> พักผ่อนให้เพียงพอ</li>
+                                <li><i class="bi bi-check-circle-fill text-success"></i> ดื่มน้ำมากๆ</li>
+                                <li><i class="bi bi-check-circle-fill text-success"></i> รับประทานยาตามอาการ</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <i class="bi bi-exclamation-triangle"></i>
+                                ข้อควรระวัง
+                            </h5>
+                            <ul class="list-unstyled">
+                                <li><i class="bi bi-exclamation-circle-fill text-warning"></i> หากอาการไม่ดีขึ้นภายใน 3 วัน</li>
+                                <li><i class="bi bi-exclamation-circle-fill text-warning"></i> หากมีไข้สูงเกิน 38.5°C</li>
+                                <li><i class="bi bi-exclamation-circle-fill text-warning"></i> หากมีอาการหอบเหนื่อยรุนแรง</li>
+                            </ul>
+                            <div class="alert alert-danger mt-3">
+                                <i class="bi bi-exclamation-diamond-fill"></i>
+                                ควรพบแพทย์ทันทีหากมีอาการดังกล่าว
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('analyze') }}" class="btn btn-primary">วิเคราะห์อาการใหม่</a>
+                    <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary">ดูประวัติการวิเคราะห์</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

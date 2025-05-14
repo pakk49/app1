@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h2 class="card-title">ข้อมูลส่วนตัว</h2>
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>ชื่อ-นามสกุล:</strong> {{ current_user.full_name }}</p>
+                        <p><strong>เพศ:</strong> {{ current_user.gender }}</p>
+                        <p><strong>อายุ:</strong> {{ ((current_user.birth_date - now).days // 365) }} ปี</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>ประวัติการแพ้ยา:</strong> {{ current_user.allergies or 'ไม่มี' }}</p>
+                        <p><strong>โรคประจำตัว:</strong> {{ current_user.conditions or 'ไม่มี' }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if bmi_graph %}
+        <div class="card mb-4">
+            <div class="card-body">
+                <h2 class="card-title">แนวโน้ม BMI</h2>
+                <div class="chart-container">
+                    {{ bmi_graph | safe }}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="card">
+            <div class="card-body">
+                <h2 class="card-title">ประวัติการวิเคราะห์</h2>
+                {% if consultations %}
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>วันที่</th>
+                                <th>น้ำหนัก</th>
+                                <th>ส่วนสูง</th>
+                                <th>BMI</th>
+                                <th>อาการ</th>
+                                <th>การวินิจฉัย</th>
+                                <th>ระดับความรุนแรง</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for consultation in consultations %}
+                            <tr>
+                                <td>{{ consultation.date.strftime('%Y-%m-%d %H:%M') }}</td>
+                                <td>{{ consultation.weight }} kg</td>
+                                <td>{{ consultation.height }} cm</td>
+                                <td>{{ "%.1f"|format(consultation.weight / ((consultation.height/100) ** 2)) }}</td>
+                                <td>
+                                    {% for symptom in consultation.symptoms|from_json %}
+                                    <span class="badge bg-primary">{{ symptom }}</span>
+                                    {% endfor %}
+                                </td>
+                                <td>{{ consultation.diagnosis or 'รอการวินิจฉัย' }}</td>
+                                <td>
+                                    {% set severity_color = {
+                                        'low': 'success',
+                                        'medium': 'warning',
+                                        'high': 'danger'
+                                    } %}
+                                    <span class="badge bg-{{ severity_color[consultation.severity] }}">
+                                        {{ consultation.severity }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i>
+                    ยังไม่มีประวัติการวิเคราะห์
+                </div>
+                {% endif %}
+                
+                <div class="d-grid gap-2 mt-3">
+                    <a href="{{ url_for('analyze') }}" class="btn btn-primary">วิเคราะห์อาการใหม่</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

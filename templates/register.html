@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="card-title text-center mb-4">ลงทะเบียนผู้ใช้ใหม่</h2>
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">ชื่อผู้ใช้</label>
+                        <input type="text" class="form-control" id="username" name="username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">รหัสผ่าน</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="full_name" class="form-label">ชื่อ-นามสกุล</label>
+                        <input type="text" class="form-control" id="full_name" name="full_name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="id_card" class="form-label">เลขบัตรประชาชน</label>
+                        <input type="text" class="form-control" id="id_card" name="id_card" pattern="[0-9]{13}" maxlength="13" required>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="birth_date" class="form-label">วันเกิด</label>
+                            <input type="date" class="form-control" id="birth_date" name="birth_date" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="gender" class="form-label">เพศ</label>
+                            <select class="form-select" id="gender" name="gender" required>
+                                <option value="">เลือกเพศ</option>
+                                <option value="ชาย">ชาย</option>
+                                <option value="หญิง">หญิง</option>
+                                <option value="อื่นๆ">อื่นๆ</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="allergies" class="form-label">ประวัติการแพ้ยา</label>
+                        <textarea class="form-control" id="allergies" name="allergies" rows="2"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="conditions" class="form-label">โรคประจำตัว</label>
+                        <textarea class="form-control" id="conditions" name="conditions" rows="2"></textarea>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">ลงทะเบียน</button>
+                        <a href="{{ url_for('login') }}" class="btn btn-outline-secondary">มีบัญชีอยู่แล้ว? เข้าสู่ระบบ</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
