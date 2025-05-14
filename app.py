@@ -11,14 +11,20 @@ import logging
 from logging.handlers import RotatingFileHandler
 import os
 
-app = Flask(__name__)
-app.config['SECRET_KEY'] = 'your-secret-key-here'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///medical.db'
+# สร้าง Flask application และ extensions
+db = SQLAlchemy()
+bcrypt = Bcrypt()
+login_manager = LoginManager()
 
-# Setup logging
-if not os.path.exists('logs'):
-    os.mkdir('logs')
-file_handler = RotatingFileHandler('logs/medical_app.log', maxBytes=10240, backupCount=10)
+def create_app():
+    app = Flask(__name__)
+    app.config['SECRET_KEY'] = 'your-secret-key-here'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///medical.db'
+
+    # Setup logging
+    if not os.path.exists('logs'):
+        os.mkdir('logs')
+    file_handler = RotatingFileHandler('logs/medical_app.log', maxBytes=10240, backupCount=10)
 file_handler.setFormatter(logging.Formatter(
     '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'
 ))
@@ -221,12 +227,22 @@ def forgot_password():
 
     return render_template('forgot_password.html')
 
+# Initialize app instance
+app = create_app()
+
+# Initialize extensions
+db.init_app(app)
+bcrypt.init_app(app)
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+
 # Custom template filter for JSON
 @app.template_filter('from_json')
 def from_json(value):
     return json.loads(value) if value else []
 
+with app.app_context():
+    db.create_all()
+
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
     app.run(debug=True)
