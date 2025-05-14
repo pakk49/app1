@@ -33,47 +33,123 @@
         <div class="card">
             <div class="card-body">
                 <h2 class="card-title">ประวัติการวิเคราะห์</h2>
-                {% if consultations %}
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>วันที่</th>
-                                <th>น้ำหนัก</th>
-                                <th>ส่วนสูง</th>
-                                <th>BMI</th>
-                                <th>อาการ</th>
-                                <th>การวินิจฉัย</th>
-                                <th>ระดับความรุนแรง</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for consultation in consultations %}
-                            <tr>
-                                <td>{{ consultation.date.strftime('%Y-%m-%d %H:%M') }}</td>
-                                <td>{{ consultation.weight }} kg</td>
-                                <td>{{ consultation.height }} cm</td>
-                                <td>{{ "%.1f"|format(consultation.weight / ((consultation.height/100) ** 2)) }}</td>
-                                <td>
-                                    {% for symptom in consultation.symptoms|from_json %}
-                                    <span class="badge bg-primary">{{ symptom }}</span>
+                {% if consultations %}                <div class="consultation-history">
+                    {% for consultation in consultations %}
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="card-title">
+                                    <i class="bi bi-calendar-event"></i>
+                                    วันที่ {{ consultation.date.strftime('%d/%m/%Y') }}
+                                    <small class="text-muted">เวลา {{ consultation.date.strftime('%H:%M') }} น.</small>
+                                </h5>
+                                {% set severity_color = {
+                                    'low': 'success',
+                                    'medium': 'warning',
+                                    'high': 'danger'
+                                } %}
+                                {% set severity_text = {
+                                    'low': 'ไม่รุนแรง',
+                                    'medium': 'ปานกลาง',
+                                    'high': 'รุนแรง'
+                                } %}
+                                <span class="badge bg-{{ severity_color[consultation.severity] }} p-2">
+                                    <i class="bi bi-exclamation-circle me-1"></i>
+                                    {{ severity_text[consultation.severity] }}
+                                </span>
+                            </div>
+
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <div class="border rounded p-3">
+                                        <h6><i class="bi bi-person-lines-fill"></i> ข้อมูลร่างกาย</h6>
+                                        <p class="mb-1">น้ำหนัก: {{ consultation.weight }} กก.</p>
+                                        <p class="mb-1">ส่วนสูง: {{ consultation.height }} ซม.</p>
+                                        <p class="mb-0">
+                                            BMI: {{ "%.1f"|format(consultation.weight / ((consultation.height/100) ** 2)) }}
+                                            {% set bmi = consultation.weight / ((consultation.height/100) ** 2) %}
+                                            {% if bmi < 18.5 %}
+                                                <span class="text-warning">(น้ำหนักน้อย)</span>
+                                            {% elif bmi < 25 %}
+                                                <span class="text-success">(ปกติ)</span>
+                                            {% elif bmi < 30 %}
+                                                <span class="text-warning">(น้ำหนักเกิน)</span>
+                                            {% else %}
+                                                <span class="text-danger">(อ้วน)</span>
+                                            {% endif %}
+                                        </p>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    <div class="border rounded p-3">
+                                        <h6><i class="bi bi-clipboard2-pulse"></i> อาการที่พบ</h6>
+                                        <div>
+                                            {% set symptom_names = {
+                                                'fever': 'มีไข้',
+                                                'headache': 'ปวดศีรษะ',
+                                                'fatigue': 'อ่อนเพลีย',
+                                                'muscle_pain': 'ปวดเมื่อยกล้ามเนื้อ',
+                                                'cough': 'ไอ',
+                                                'sore_throat': 'เจ็บคอ',
+                                                'runny_nose': 'น้ำมูกไหล',
+                                                'difficulty_breathing': 'หายใจลำบาก',
+                                                'nausea': 'คลื่นไส้',
+                                                'vomiting': 'อาเจียน',
+                                                'diarrhea': 'ท้องเสีย',
+                                                'stomach_pain': 'ปวดท้อง',
+                                                'rash': 'ผื่นคัน',
+                                                'dizziness': 'วิงเวียนศีรษะ',
+                                                'joint_pain': 'ปวดข้อ'
+                                            } %}
+                                            {% for symptom in consultation.symptoms|from_json %}
+                                            <span class="badge bg-primary mb-1 me-1">
+                                                {{ symptom_names[symptom] or symptom }}
+                                            </span>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="border rounded p-3">
+                                        <h6><i class="bi bi-journal-medical"></i> การวินิจฉัย</h6>
+                                        {% if consultation.diagnosis %}
+                                            {% set diagnoses = consultation.diagnosis|from_json %}
+                                            {% for disease, probability in diagnoses.items() %}
+                                            <div class="mb-2">
+                                                <small>{{ disease }}</small>
+                                                <div class="progress" style="height: 10px;">
+                                                    <div class="progress-bar" role="progressbar" 
+                                                         style="width: {{ probability }}%" 
+                                                         aria-valuenow="{{ probability }}" 
+                                                         aria-valuemin="0" 
+                                                         aria-valuemax="100">
+                                                    </div>
+                                                </div>
+                                                <small class="text-muted">{{ "%.1f"|format(probability) }}%</small>
+                                            </div>
+                                            {% endfor %}
+                                        {% else %}
+                                            <p class="text-muted mb-0">รอการวินิจฉัย</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {% if consultation.recommendations %}
+                            <div class="mt-3">
+                                <h6><i class="bi bi-lightbulb"></i> คำแนะนำ</h6>
+                                <ul class="list-unstyled">
+                                    {% for recommendation in consultation.recommendations|from_json %}
+                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>{{ recommendation }}</li>
                                     {% endfor %}
-                                </td>
-                                <td>{{ consultation.diagnosis or 'รอการวินิจฉัย' }}</td>
-                                <td>
-                                    {% set severity_color = {
-                                        'low': 'success',
-                                        'medium': 'warning',
-                                        'high': 'danger'
-                                    } %}
-                                    <span class="badge bg-{{ severity_color[consultation.severity] }}">
-                                        {{ consultation.severity }}
-                                    </span>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                                </ul>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
                 </div>
                 {% else %}
                 <div class="alert alert-info">
